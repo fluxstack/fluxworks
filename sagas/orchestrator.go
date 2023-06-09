@@ -1,4 +1,4 @@
-package saga
+package sagas
 
 type Orchestrator struct {
 }
