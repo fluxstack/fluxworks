@@ -1,13 +1,13 @@
 package zaplog
 
 import (
-	"github.com/fluxstack/fluxworks/core/log"
+	log2 "github.com/fluxstack/fluxworks/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 type Options struct {
-	Level       log.Level
+	Level       log2.Level
 	Output      string
 	ErrorOutput string
 	Production  bool
@@ -40,13 +40,13 @@ func NewZapLogger(opt Options) (*zap.Logger, error) {
 
 	level := zapcore.DebugLevel
 	switch opt.Level {
-	case log.LevelFatal:
+	case log2.LevelFatal:
 		level = zapcore.FatalLevel
-	case log.LevelError:
+	case log2.LevelError:
 		level = zapcore.ErrorLevel
-	case log.LevelWarn:
+	case log2.LevelWarn:
 		level = zapcore.WarnLevel
-	case log.LevelInfo:
+	case log2.LevelInfo:
 		level = zapcore.InfoLevel
 	}
 
@@ -63,6 +63,6 @@ func NewZapLogger(opt Options) (*zap.Logger, error) {
 	return config.Build(options...)
 }
 
-func New(zlog *zap.Logger) *log.Logger {
-	return log.New(NewAdapter(zlog))
+func New(zlog *zap.Logger) *log2.Logger {
+	return log2.New(NewAdapter(zlog))
 }

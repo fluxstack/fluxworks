@@ -1,7 +1,7 @@
 package gin
 
 import (
-	"github.com/fluxstack/fluxworks/core/log"
+	"github.com/fluxstack/fluxworks/log"
 	"github.com/gin-gonic/gin"
 	"time"
 )

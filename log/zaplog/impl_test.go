@@ -1,7 +1,7 @@
 package zaplog
 
 import (
-	"github.com/fluxstack/fluxworks/core/log"
+	log2 "github.com/fluxstack/fluxworks/log"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,13 +11,13 @@ func TestZapLog_Log(t *testing.T) {
 	assert.NoError(t, err)
 	adapter := NewAdapter(zlog)
 	//log := log2.Wrap(adapter, log2.Fields{})
-	LOG := log.New(log.Wrap(adapter, log.Fields{}))
-	LOG.Infow(log.Fields{
+	LOG := log2.New(log2.Wrap(adapter, log2.Fields{}))
+	LOG.Infow(log2.Fields{
 		"msg": "hello",
 		"uid": 1234,
 	})
-	LOG3 := LOG.With(log.Field("task", 2))
-	LOG3.Infow(log.Fields{
+	LOG3 := LOG.With(log2.Field("task", 2))
+	LOG3.Infow(log2.Fields{
 		"uid": "23455",
 	})
 }
