@@ -1,9 +1,9 @@
-module github.com/fluxstack/fluxworks/gin
+module github.com/fluxstack/fluxworks/contrib/gin
 
 go 1.20
 
 require (
-	github.com/fluxstack/fluxworks/core v0.1.0
+	github.com/fluxstack/fluxworks v0.1.0
 	github.com/gin-gonic/gin v1.9.1
 )
 
@@ -35,4 +35,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/fluxstack/fluxworks/core => ../core
+replace github.com/fluxstack/fluxworks => ../../

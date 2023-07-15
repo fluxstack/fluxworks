@@ -11,30 +11,35 @@ type Options struct {
 	Output      string
 	ErrorOutput string
 	Production  bool
+	CallerSkip  int
 }
 
-func New(opts Options) (*zap.Logger, error) {
+func NewZapLogger(opt Options) (*zap.Logger, error) {
 
 	var config zap.Config
-	if opts.Production {
+	if opt.Production {
 		config = zap.NewProductionConfig()
 	} else {
 		config = zap.NewDevelopmentConfig()
+	}
+
+	if opt.CallerSkip == 0 {
+		opt.CallerSkip = 3
 	}
 
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	options := []zap.Option{
 		zap.AddStacktrace(zap.NewAtomicLevelAt(zapcore.ErrorLevel)),
 		zap.AddCaller(),
-		zap.AddCallerSkip(3),
+		zap.AddCallerSkip(opt.CallerSkip),
 	}
 
-	if !opts.Production {
+	if !opt.Production {
 		options = append(options, zap.Development())
 	}
 
 	level := zapcore.DebugLevel
-	switch opts.Level {
+	switch opt.Level {
 	case log.LevelFatal:
 		level = zapcore.FatalLevel
 	case log.LevelError:
@@ -47,29 +52,17 @@ func New(opts Options) (*zap.Logger, error) {
 
 	config.Level = zap.NewAtomicLevelAt(level)
 
-	if opts.Output != "" {
-		config.OutputPaths = append(config.OutputPaths, opts.Output)
+	if opt.Output != "" {
+		config.OutputPaths = append(config.OutputPaths, opt.Output)
 	}
 
-	if opts.ErrorOutput != "" {
-		config.ErrorOutputPaths = append(config.ErrorOutputPaths, opts.ErrorOutput)
+	if opt.ErrorOutput != "" {
+		config.ErrorOutputPaths = append(config.ErrorOutputPaths, opt.ErrorOutput)
 	}
 
 	return config.Build(options...)
 }
 
-func ProductionLogger() *log.Logger {
-	l, err := New(Options{Production: true})
-	if err != nil {
-		panic(err)
-	}
-	return log.New(NewAdapter(l))
-}
-
-func DebugLogger() *log.Logger {
-	l, err := New(Options{Production: false})
-	if err != nil {
-		panic(err)
-	}
-	return log.New(NewAdapter(l))
+func New(zlog *zap.Logger) *log.Logger {
+	return log.New(NewAdapter(zlog))
 }
