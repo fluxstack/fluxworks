@@ -1,4 +1,4 @@
-module github.com/fluxstack/fluxworks/core
+module github.com/fluxstack/fluxworks
 
 go 1.20
 
