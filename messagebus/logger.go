@@ -1,4 +1,4 @@
-package eventbus
+package messagebus
 
 import (
 	"github.com/ThreeDotsLabs/watermill"
