@@ -2,13 +2,11 @@ package sagas
 
 import (
 	"context"
-
-	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 )
 
 type remoteStepAction struct {
 	predicate func(context.Context, SagaData) bool
-	handler   func(context.Context, SagaData) cqrs.Command
+	handler   func(context.Context, SagaData) Command
 }
 
 func (a *remoteStepAction) isInvocable(ctx context.Context, sagaData SagaData) bool {
@@ -19,6 +17,6 @@ func (a *remoteStepAction) isInvocable(ctx context.Context, sagaData SagaData) b
 	return a.predicate(ctx, sagaData)
 }
 
-func (a *remoteStepAction) execute(ctx context.Context, sagaData SagaData) cqrs.Command {
+func (a *remoteStepAction) execute(ctx context.Context, sagaData SagaData) Command {
 	return a.handler(ctx, sagaData)
 }

@@ -2,8 +2,6 @@ package sagas
 
 import (
 	"context"
-
-	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 )
 
 // LocalStep is used to execute local saga business logic
@@ -32,7 +30,7 @@ func (s LocalStep) hasInvocableAction(_ context.Context, _ SagaData, compensatin
 	return s.actions[compensating] != nil
 }
 
-func (s LocalStep) getReplyHandler(string, bool) func(context.Context, SagaData, cqrs.Reply) error {
+func (s LocalStep) getReplyHandler(string, bool) func(context.Context, SagaData, Reply) error {
 	return nil
 }
 

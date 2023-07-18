@@ -49,7 +49,7 @@ type CommandDispatcher struct {
 	subscriberConstructor cqrs.CommandsSubscriberConstructor
 	publisher             message.Publisher
 	marshaler             cqrs.CommandEventMarshaler
-	handlers              map[string]cqrs.ReplyCommandHandler
+	handlers              map[string]ReplyCommandHandler
 	logger                watermill.LoggerAdapter
 }
 
@@ -65,7 +65,7 @@ func NewCommandDispatcher(
 		subscriberConstructor: subscriberConstructor,
 		publisher:             publisher,
 		marshaler:             marshaler,
-		handlers:              map[string]cqrs.ReplyCommandHandler{},
+		handlers:              map[string]ReplyCommandHandler{},
 		logger:                logger,
 	}
 
@@ -79,7 +79,7 @@ func NewCommandDispatcher(
 }
 
 // Handle adds a new Command that will be handled by handler
-func (d *CommandDispatcher) Handle(handler cqrs.ReplyCommandHandler) *CommandDispatcher {
+func (d *CommandDispatcher) Handle(handler ReplyCommandHandler) *CommandDispatcher {
 	cmd := handler.NewCommand()
 	commandName := d.marshaler.Name(cmd)
 	d.logger.Trace("saga command handler added", watermill.LogFields{"command_name": commandName})
@@ -149,13 +149,13 @@ func (d *CommandDispatcher) receiveMessage(msg *message.Message) (messages []*me
 
 	correlationHeaders := d.correlationHeaders(msg.Metadata)
 
-	command := cmd.(cqrs.Command)
+	command := cmd.(Command)
 
 	ctx := msg.Context()
 	replies, err := handler.Handle(ctx, command)
 	if err != nil {
 		logger.Error("saga command handler returned an error", err, watermill.LogFields{})
-		messages, rerr := d.buildReplies(ctx, []cqrs.ReplyMessage{cqrs.WithFailure()}, correlationHeaders)
+		messages, rerr := d.buildReplies(ctx, []ReplyMessage{WithFailure()}, correlationHeaders)
 		if rerr != nil {
 			logger.Error("error building replies", rerr, watermill.LogFields{})
 			return messages, rerr
@@ -176,19 +176,19 @@ func (d *CommandDispatcher) commandMessageInfo(message *message.Message) (string
 	var err error
 	var commandName, sagaID, sagaName string
 
-	commandName, err = message.Metadata.GetRequired(cqrs.MessageCommandName)
+	commandName, err = GetRequired(message.Metadata, MessageCommandName)
 	if err != nil {
 		d.logger.Error("error reading command name", err, watermill.LogFields{})
 		return "", "", "", err
 	}
 
-	sagaID, err = message.Metadata.GetRequired(MessageCommandSagaID)
+	sagaID, err = GetRequired(message.Metadata, MessageCommandSagaID)
 	if err != nil {
 		d.logger.Error("error reading saga id", err, watermill.LogFields{})
 		return "", "", "", err
 	}
 
-	sagaName, err = message.Metadata.GetRequired(MessageCommandSagaName)
+	sagaName, err = GetRequired(message.Metadata, MessageCommandSagaName)
 	if err != nil {
 		d.logger.Error("error reading saga name", err, watermill.LogFields{})
 		return "", "", "", err
@@ -197,15 +197,15 @@ func (d *CommandDispatcher) commandMessageInfo(message *message.Message) (string
 	return commandName, sagaID, sagaName, nil
 }
 
-func (d *CommandDispatcher) buildReplies(ctx context.Context, replies []cqrs.ReplyMessage, correlationHeaders message.Metadata) (messages []*message.Message, err error) {
+func (d *CommandDispatcher) buildReplies(ctx context.Context, replies []ReplyMessage, correlationHeaders message.Metadata) (messages []*message.Message, err error) {
 	messages = make([]*message.Message, len(replies))
 	for i, reply := range replies {
 		msg, err := d.marshaler.Marshal(reply.Reply())
 		if err != nil {
 			return messages, err
 		}
-		message.WithHeaders(correlationHeaders)(msg)
-		message.WithHeaders(reply.Headers())(msg)
+		WithHeaders(correlationHeaders)(msg)
+		WithHeaders(reply.Headers())(msg)
 		msg.SetContext(ctx)
 		messages[i] = msg
 	}
@@ -215,12 +215,12 @@ func (d *CommandDispatcher) buildReplies(ctx context.Context, replies []cqrs.Rep
 func (d *CommandDispatcher) correlationHeaders(headers message.Metadata) message.Metadata {
 	replyHeaders := make(map[string]string)
 	for key, value := range headers {
-		if key == cqrs.MessageCommandName {
+		if key == MessageCommandName {
 			continue
 		}
 
-		if strings.HasPrefix(key, cqrs.MessageCommandPrefix) {
-			replyHeader := cqrs.MessageReplyPrefix + key[len(cqrs.MessageCommandPrefix):]
+		if strings.HasPrefix(key, MessageCommandPrefix) {
+			replyHeader := MessageReplyPrefix + key[len(MessageCommandPrefix):]
 			replyHeaders[replyHeader] = value
 		}
 	}

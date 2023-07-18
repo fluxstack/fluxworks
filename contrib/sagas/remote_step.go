@@ -2,14 +2,12 @@ package sagas
 
 import (
 	"context"
-
-	"github.com/ThreeDotsLabs/watermill/components/cqrs"
 )
 
 // RemoteStep is used to execute distributed saga business logic
 type RemoteStep struct {
 	actionHandlers map[bool]*remoteStepAction
-	replyHandlers  map[bool]map[string]func(context.Context, SagaData, cqrs.Reply) error
+	replyHandlers  map[bool]map[string]func(context.Context, SagaData, Reply) error
 }
 
 var _ Step = (*RemoteStep)(nil)
@@ -21,7 +19,7 @@ func NewRemoteStep() RemoteStep {
 			notCompensating: nil,
 			isCompensating:  nil,
 		},
-		replyHandlers: map[bool]map[string]func(context.Context, SagaData, cqrs.Reply) error{
+		replyHandlers: map[bool]map[string]func(context.Context, SagaData, Reply) error{
 			notCompensating: {},
 			isCompensating:  {},
 		},
@@ -29,7 +27,7 @@ func NewRemoteStep() RemoteStep {
 }
 
 // Action adds a domain command constructor that will be called while the definition is advancing
-func (s RemoteStep) Action(fn func(context.Context, SagaData) cqrs.Command, options ...RemoteStepActionOption) RemoteStep {
+func (s RemoteStep) Action(fn func(context.Context, SagaData) Command, options ...RemoteStepActionOption) RemoteStep {
 	handler := &remoteStepAction{
 		handler: fn,
 	}
@@ -46,14 +44,14 @@ func (s RemoteStep) Action(fn func(context.Context, SagaData) cqrs.Command, opti
 // HandleActionReply adds additional handling for specific replies while advancing
 //
 // SuccessReply and FailureReply do not require any special handling unless desired
-func (s RemoteStep) HandleActionReply(reply cqrs.Reply, handler func(context.Context, SagaData, cqrs.Reply) error) RemoteStep {
+func (s RemoteStep) HandleActionReply(reply Reply, handler func(context.Context, SagaData, Reply) error) RemoteStep {
 	s.replyHandlers[notCompensating][reply.ReplyName()] = handler
 
 	return s
 }
 
 // Compensation adds a domain command constructor that will be called while the definition is compensating
-func (s RemoteStep) Compensation(fn func(context.Context, SagaData) cqrs.Command, options ...RemoteStepActionOption) RemoteStep {
+func (s RemoteStep) Compensation(fn func(context.Context, SagaData) Command, options ...RemoteStepActionOption) RemoteStep {
 	handler := &remoteStepAction{
 		handler: fn,
 	}
@@ -70,7 +68,7 @@ func (s RemoteStep) Compensation(fn func(context.Context, SagaData) cqrs.Command
 // HandleCompensationReply adds additional handling for specific replies while compensating
 //
 // SuccessReply does not require any special handling unless desired
-func (s RemoteStep) HandleCompensationReply(reply cqrs.Reply, handler func(context.Context, SagaData, cqrs.Reply) error) RemoteStep {
+func (s RemoteStep) HandleCompensationReply(reply Reply, handler func(context.Context, SagaData, Reply) error) RemoteStep {
 	s.replyHandlers[isCompensating][reply.ReplyName()] = handler
 
 	return s
@@ -80,14 +78,14 @@ func (s RemoteStep) hasInvocableAction(ctx context.Context, sagaData SagaData, c
 	return s.actionHandlers[compensating] != nil && s.actionHandlers[compensating].isInvocable(ctx, sagaData)
 }
 
-func (s RemoteStep) getReplyHandler(replyName string, compensating bool) func(context.Context, SagaData, cqrs.Reply) error {
+func (s RemoteStep) getReplyHandler(replyName string, compensating bool) func(context.Context, SagaData, Reply) error {
 	return s.replyHandlers[compensating][replyName]
 }
 
 func (s RemoteStep) execute(ctx context.Context, sagaData SagaData, compensating bool) func(results *stepResults) {
 	if commandToSend := s.actionHandlers[compensating].execute(ctx, sagaData); commandToSend != nil {
 		return func(actions *stepResults) {
-			actions.commands = []cqrs.Command{commandToSend}
+			actions.commands = []Command{commandToSend}
 		}
 	}
 
