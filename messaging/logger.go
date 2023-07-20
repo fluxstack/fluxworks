@@ -1,4 +1,4 @@
-package messagebus
+package messaging
 
 import (
 	"github.com/ThreeDotsLabs/watermill"
