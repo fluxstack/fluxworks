@@ -19,13 +19,13 @@ type Orchestrator interface {
 }
 
 type orchestrator struct {
-	definition            Definition
-	instanceStore         InstanceStore
-	subscriberConstructor cqrs.CommandsSubscriberConstructor
-	publisher             message.Publisher
-	marshaler             cqrs.CommandEventMarshaler
-	generateTopic         func(commandName string) string
-	logger                watermill.LoggerAdapter
+	definition              Definition
+	instanceStore           InstanceStore
+	subscriberConstructorFn cqrs.CommandProcessorSubscriberConstructorFn
+	publisher               message.Publisher
+	marshaler               cqrs.CommandEventMarshaler
+	generateTopic           func(commandName string) string
+	logger                  watermill.LoggerAdapter
 }
 
 const sagaNotStarted = -1
@@ -36,20 +36,20 @@ type ReplyFactoryFunc func() interface{}
 func NewOrchestrator(
 	definition Definition,
 	store InstanceStore,
-	subscriberConstructor cqrs.CommandsSubscriberConstructor,
+	subscriberConstructor cqrs.CommandProcessorSubscriberConstructorFn,
 	publisher message.Publisher,
 	marshaler cqrs.CommandEventMarshaler,
 	generateTopic func(commandName string) string,
 	logger watermill.LoggerAdapter,
 	options ...OrchestratorOption) Orchestrator {
 	o := &orchestrator{
-		definition:            definition,
-		instanceStore:         store,
-		subscriberConstructor: subscriberConstructor,
-		publisher:             publisher,
-		marshaler:             marshaler,
-		generateTopic:         generateTopic,
-		logger:                logger,
+		definition:              definition,
+		instanceStore:           store,
+		subscriberConstructorFn: subscriberConstructor,
+		publisher:               publisher,
+		marshaler:               marshaler,
+		generateTopic:           generateTopic,
+		logger:                  logger,
 	}
 
 	for _, option := range options {
@@ -63,8 +63,9 @@ func NewOrchestrator(
 
 // OrchestratorFactory orchestrates local and distributed processes
 type OrchestratorFactory struct {
-	instanceStore         InstanceStore
-	subscriberConstructor cqrs.CommandsSubscriberConstructor
+	instanceStore InstanceStore
+	//subscriberConstructor cqrs.CommandsSubscriberConstructor
+	subscriberConstructor cqrs.CommandProcessorSubscriberConstructorFn
 	publisher             message.Publisher
 	marshaler             cqrs.CommandEventMarshaler
 	generateTopic         func(commandName string) string
@@ -75,7 +76,7 @@ type OrchestratorFactory struct {
 // NewOrchestratorFactory constructs a new OrchestratorFactory
 func NewOrchestratorFactory(
 	store InstanceStore,
-	subscriberConstructor cqrs.CommandsSubscriberConstructor,
+	subscriberConstructor cqrs.CommandProcessorSubscriberConstructorFn,
 	publisher message.Publisher,
 	marshaler cqrs.CommandEventMarshaler,
 	generateTopic func(commandName string) string,
@@ -160,7 +161,7 @@ func (o *orchestrator) AddHandlerToRouter(r *message.Router) (handler *message.H
 
 	logger.Debug("Adding saga to router", nil)
 
-	subscriber, err := o.subscriberConstructor(handlerName)
+	subscriber, err := o.subscriberConstructorFn(cqrs.CommandProcessorSubscriberConstructorParams{HandlerName: handlerName})
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot create subscriber for command processor")
 	}
