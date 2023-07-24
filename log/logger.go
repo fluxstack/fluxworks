@@ -9,17 +9,18 @@ type Logger struct {
 }
 
 func New(adapter Adapter) *Logger {
-	return &Logger{adapter: Wrap(adapter, Fields{})}
+	return &Logger{adapter: With(adapter, Fields{})}
+	//return &Logger{adapter: adapter}
 }
 
 func NewWithFields(adapter Adapter, fields Fields) *Logger {
-	return &Logger{adapter: Wrap(adapter, fields)}
+	return &Logger{adapter: With(adapter, fields)}
 }
 
 const DefaultMessageKey = "msg"
 
 func (l *Logger) With(fields Fields) *Logger {
-	return &Logger{adapter: Wrap(l.adapter, fields)}
+	return &Logger{adapter: With(l.adapter, fields)}
 }
 
 func (l *Logger) Info(args ...interface{}) {

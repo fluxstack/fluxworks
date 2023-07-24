@@ -4,12 +4,12 @@ type Adapter interface {
 	Log(level Level, fields Fields) error
 }
 
-type wrap struct {
+type adapterWrap struct {
 	fields  Fields
 	adapter Adapter
 }
 
-func (w *wrap) Log(level Level, fields Fields) error {
+func (w *adapterWrap) Log(level Level, fields Fields) error {
 	kvs := make(map[string]interface{}, len(w.fields)+len(fields))
 	for k, v := range w.fields {
 		kvs[k] = v
@@ -20,10 +20,10 @@ func (w *wrap) Log(level Level, fields Fields) error {
 	return w.adapter.Log(level, kvs)
 }
 
-func Wrap(logger Adapter, fields Fields) Adapter {
-	l, ok := logger.(*wrap)
+func With(logger Adapter, fields Fields) Adapter {
+	l, ok := logger.(*adapterWrap)
 	if !ok {
-		return &wrap{adapter: logger, fields: fields}
+		return &adapterWrap{adapter: logger, fields: fields}
 	}
 	kvs := make(map[string]interface{}, len(l.fields)+len(fields))
 	for k, v := range l.fields {
@@ -33,5 +33,5 @@ func Wrap(logger Adapter, fields Fields) Adapter {
 		kvs[k] = v
 	}
 
-	return &wrap{adapter: l.adapter, fields: kvs}
+	return &adapterWrap{adapter: l.adapter, fields: kvs}
 }

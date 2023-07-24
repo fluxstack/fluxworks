@@ -10,8 +10,8 @@ func TestZapLog_Log(t *testing.T) {
 	zlog, err := NewZapLogger(Options{Production: true})
 	assert.NoError(t, err)
 	adapter := NewAdapter(zlog)
-	//log := log2.Wrap(adapter, log2.Fields{})
-	LOG := log2.New(log2.Wrap(adapter, log2.Fields{}))
+	//log := log2.With(adapter, log2.Fields{})
+	LOG := log2.New(log2.With(adapter, log2.Fields{}))
 	LOG.Infow(log2.Fields{
 		"msg": "hello",
 		"uid": 1234,
