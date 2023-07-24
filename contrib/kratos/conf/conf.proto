@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package anyloop.conf;
+
+option go_package = "github.com/fluxstack/fluxworks/contrib/kratos/conf;conf";
+
+
+message Logger {
+  message Zap {
+    bool production = 1;
+  }
+  string impl = 1; // zap
+  string level = 2;
+  Zap zap = 3;
+}
