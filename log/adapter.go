@@ -1,37 +1,68 @@
 package log
 
+import (
+	"context"
+	"github.com/samber/lo"
+)
+
 type Adapter interface {
 	Log(level Level, fields Fields) error
 }
 
-type adapterWrap struct {
+type adapter struct {
 	fields  Fields
 	adapter Adapter
+	prefix  []interface{}
+	ctx     context.Context
 }
 
-func (w *adapterWrap) Log(level Level, fields Fields) error {
-	kvs := make(map[string]interface{}, len(w.fields)+len(fields))
-	for k, v := range w.fields {
-		kvs[k] = v
+func (w *adapter) Log(level Level, fields Fields) error {
+	kvs := make(map[string]Field, len(w.fields)+len(fields))
+	for _, f := range w.fields {
+		kvs[f.K] = f
 	}
-	for k, v := range fields {
-		kvs[k] = v
+	for _, f := range fields {
+		kvs[f.K] = f
 	}
-	return w.adapter.Log(level, kvs)
+	return w.adapter.Log(level, lo.Values(kvs))
 }
 
-func With(logger Adapter, fields Fields) Adapter {
-	l, ok := logger.(*adapterWrap)
+func WithContext(ctx context.Context, adapter Adapter) Adapter {
+	return nil
+}
+
+func With(a Adapter, fields Fields) Adapter {
+	l, ok := a.(*adapter)
 	if !ok {
-		return &adapterWrap{adapter: logger, fields: fields}
+		return &adapter{adapter: a, fields: fields}
 	}
-	kvs := make(map[string]interface{}, len(l.fields)+len(fields))
-	for k, v := range l.fields {
-		kvs[k] = v
+	kvs := make(map[string]Field, len(l.fields)+len(fields))
+	for _, f := range l.fields {
+		kvs[f.K] = f
 	}
-	for k, v := range fields {
-		kvs[k] = v
+	for _, f := range fields {
+		kvs[f.K] = f
 	}
 
-	return &adapterWrap{adapter: l.adapter, fields: kvs}
+	return &adapter{adapter: l.adapter, fields: lo.Values(kvs)}
+}
+
+// Valuer is returns a log value.
+type Valuer func(ctx context.Context) interface{}
+
+func bindValues(ctx context.Context, keyvals []interface{}) {
+	for i := 1; i < len(keyvals); i += 2 {
+		if v, ok := keyvals[i].(Valuer); ok {
+			keyvals[i] = v(ctx)
+		}
+	}
+}
+
+func containsValuer(keyvals []interface{}) bool {
+	for i := 1; i < len(keyvals); i += 2 {
+		if _, ok := keyvals[i].(Valuer); ok {
+			return true
+		}
+	}
+	return false
 }

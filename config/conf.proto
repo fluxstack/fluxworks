@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package anyloop.conf;
+
+option go_package = ".;config";
+
+
+message Database {
+  string driver = 1;
+  string source = 2;
+}
+
+message Redis {
+  string network = 1;
+  string addr = 2;
+  int64 read_timeout_sec = 3;
+  int64 write_timeout_sec = 4;
+}
+
+message Kafka {
+  message Consumer {
+    repeated string topics = 1;
+    string group = 2;
+    string client_id = 3;
+  }
+
+  message Producer {
+    string topic = 1;
+  }
+
+  repeated string servers = 1;
+  Consumer consumer = 2;
+  Producer producer = 3;
+}
+
+
+message Nacos {
+  message Addr {
+    string host = 1;
+    uint64 port = 2;
+  }
+
+  repeated Addr addrs = 1;
+  string namespace_id = 2;
+  string group = 3;
+  string dataId = 4;
+  string log_level = 5;
+  string prefix = 6;
+  string cluster = 7;
+  string default_kind = 8;
+}
