@@ -1,7 +1,8 @@
 package log
 
 import (
-	"fmt"
+	"context"
+	"github.com/fluxstack/fluxworks/types"
 )
 
 type Logger struct {
@@ -9,66 +10,88 @@ type Logger struct {
 }
 
 func New(adapter Adapter) *Logger {
-	return &Logger{adapter: With(adapter, Fields{})}
-	//return &Logger{adapter: adapter}
-}
-
-func NewWithFields(adapter Adapter, fields Fields) *Logger {
-	return &Logger{adapter: With(adapter, fields)}
+	return &Logger{adapter: With(adapter, types.M{})}
 }
 
 const DefaultMessageKey = "msg"
+const DefaultErrorKey = "error"
 
-func (l *Logger) With(fields Fields) *Logger {
+func (l *Logger) With(fields types.M) *Logger {
 	return &Logger{adapter: With(l.adapter, fields)}
 }
 
-func (l *Logger) Info(args ...interface{}) {
-	l.adapter.Log(LevelInfo, Fields{
-		DefaultMessageKey: fmt.Sprint(args...),
-	})
+func (l *Logger) WithContext(ctx context.Context) *Logger {
+	return &Logger{adapter: WithContext(ctx, l.adapter, types.M{})}
 }
 
-func (l *Logger) Infow(fields Fields) {
-	l.adapter.Log(LevelInfo, fields)
+func (l *Logger) Info(msg string, fields ...types.M) {
+	kvs := types.M{}
+	for _, f := range fields {
+		for k, v := range f {
+			kvs[k] = v
+		}
+	}
+	kvs[DefaultMessageKey] = msg
+	l.adapter.Log(LevelInfo, kvs)
 }
 
-func (l *Logger) Debug(args ...interface{}) {
-	l.adapter.Log(LevelDebug, Fields{
-		DefaultMessageKey: fmt.Sprint(args...),
-	})
+func (l *Logger) Debug(msg string, fields ...types.M) {
+	kvs := types.M{}
+	for _, f := range fields {
+		for k, v := range f {
+			kvs[k] = v
+		}
+	}
+	kvs[DefaultMessageKey] = msg
+	l.adapter.Log(LevelDebug, kvs)
 }
 
-func (l *Logger) Debugw(fields Fields) {
-	l.adapter.Log(LevelDebug, fields)
+func (l *Logger) Warn(msg string, fields ...types.M) {
+
+	kvs := types.M{}
+	for _, f := range fields {
+		for k, v := range f {
+			kvs[k] = v
+		}
+	}
+	kvs[DefaultMessageKey] = msg
+	l.adapter.Log(LevelWarn, kvs)
 }
 
-func (l *Logger) Warn(args ...interface{}) {
-	l.adapter.Log(LevelWarn, Fields{
-		DefaultMessageKey: fmt.Sprint(args...),
-	})
+func (l *Logger) Error(msg string, err error, fields ...types.M) {
+	kvs := types.M{}
+	for _, f := range fields {
+		for k, v := range f {
+			kvs[k] = v
+		}
+	}
+	kvs[DefaultMessageKey] = msg
+	kvs[DefaultErrorKey] = err.Error()
+	l.adapter.Log(LevelError, kvs)
 }
 
-func (l *Logger) Warnw(fields Fields) {
-	l.adapter.Log(LevelWarn, fields)
+var defaultLogger *Logger
+
+func SetLogger(logger *Logger) {
+	defaultLogger = logger
 }
 
-func (l *Logger) Error(args ...interface{}) {
-	l.adapter.Log(LevelError, Fields{
-		DefaultMessageKey: fmt.Sprint(args...),
-	})
+func DefaultLogger() *Logger {
+	return defaultLogger
 }
 
-func (l *Logger) Errorw(fields Fields) {
-	l.adapter.Log(LevelError, fields)
+func Debug(ctx context.Context, msg string, fields ...types.M) {
+	DefaultLogger().WithContext(ctx).Debug(msg, fields...)
 }
 
-func (l *Logger) Fatal(args ...interface{}) {
-	l.adapter.Log(LevelFatal, Fields{
-		DefaultMessageKey: fmt.Sprint(args...),
-	})
+func Info(ctx context.Context, msg string, fields ...types.M) {
+	DefaultLogger().WithContext(ctx).Info(msg, fields...)
 }
 
-func (l *Logger) Fatalw(fields Fields) {
-	l.adapter.Log(LevelFatal, fields)
+func Warn(ctx context.Context, msg string, fields ...types.M) {
+	DefaultLogger().WithContext(ctx).Warn(msg, fields...)
+}
+
+func Error(ctx context.Context, msg string, err error, fields ...types.M) {
+	DefaultLogger().WithContext(ctx).Error(msg, err, fields...)
 }
