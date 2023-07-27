@@ -16,6 +16,14 @@ func MarshalToString(v interface{}) (string, error) {
 	return string(bt), nil
 }
 
+func MustMarshalToString(v interface{}) string {
+	bt, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return string(bt)
+}
+
 func Unmarshal(data []byte, v interface{}) error {
 	return json.Unmarshal(data, v)
 }
