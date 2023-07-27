@@ -21,50 +21,30 @@ func (l *Logger) With(fields types.M) *Logger {
 }
 
 func (l *Logger) WithContext(ctx context.Context) *Logger {
-	return &Logger{adapter: WithContext(ctx, l.adapter, types.M{})}
+	return &Logger{adapter: WithContext(ctx, l.adapter)}
 }
 
 func (l *Logger) Info(msg string, fields ...types.M) {
-	kvs := types.M{}
-	for _, f := range fields {
-		for k, v := range f {
-			kvs[k] = v
-		}
-	}
+	kvs := merge(fields...)
 	kvs[DefaultMessageKey] = msg
 	l.adapter.Log(LevelInfo, kvs)
 }
 
 func (l *Logger) Debug(msg string, fields ...types.M) {
-	kvs := types.M{}
-	for _, f := range fields {
-		for k, v := range f {
-			kvs[k] = v
-		}
-	}
+	kvs := merge(fields...)
 	kvs[DefaultMessageKey] = msg
 	l.adapter.Log(LevelDebug, kvs)
 }
 
 func (l *Logger) Warn(msg string, fields ...types.M) {
 
-	kvs := types.M{}
-	for _, f := range fields {
-		for k, v := range f {
-			kvs[k] = v
-		}
-	}
+	kvs := merge(fields...)
 	kvs[DefaultMessageKey] = msg
 	l.adapter.Log(LevelWarn, kvs)
 }
 
 func (l *Logger) Error(msg string, err error, fields ...types.M) {
-	kvs := types.M{}
-	for _, f := range fields {
-		for k, v := range f {
-			kvs[k] = v
-		}
-	}
+	kvs := merge(fields...)
 	kvs[DefaultMessageKey] = msg
 	kvs[DefaultErrorKey] = err.Error()
 	l.adapter.Log(LevelError, kvs)
@@ -72,8 +52,8 @@ func (l *Logger) Error(msg string, err error, fields ...types.M) {
 
 var defaultLogger *Logger
 
-func SetLogger(logger *Logger) {
-	defaultLogger = logger
+func SetLogger(adapter Adapter) {
+	defaultLogger = New(adapter)
 }
 
 func DefaultLogger() *Logger {
