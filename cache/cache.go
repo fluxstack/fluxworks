@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-func New[T any](ttl time.Duration) *cache.Cache[T] {
-	bg, err := bigcache.New(context.Background(), bigcache.DefaultConfig(ttl))
+func New[T any](ctx context.Context, ttl time.Duration) *cache.Cache[T] {
+	bg, err := bigcache.New(ctx, bigcache.DefaultConfig(ttl))
 	if err != nil {
 		panic(err)
 	}
