@@ -1,7 +1,6 @@
 package log
 
 import (
-	"github.com/fluxstack/fluxworks/contrib/kratos/conf"
 	"github.com/fluxstack/fluxworks/log"
 	"github.com/fluxstack/fluxworks/log/zaplog"
 	kzap "github.com/go-kratos/kratos/contrib/log/zap/v2"
@@ -17,7 +16,18 @@ func NewLogger(zlog *zap.Logger) *log.Logger {
 func NewKratosLogger(zlog *zap.Logger) klog.Logger {
 	return klog.With(kzap.NewLogger(zlog))
 }
-func NewZapLogger(c *conf.Logger) *zap.Logger {
+
+type Config struct {
+	Logger string    `json:"logger"`
+	Level  string    `json:"level"`
+	Zap    ZapConfig `json:"zap"`
+}
+
+type ZapConfig struct {
+	Production bool `json:"production"`
+}
+
+func NewZapLogger(c Config) *zap.Logger {
 	zlog, err := zaplog.NewZapLogger(zaplog.Options{
 		CallerSkip: 3,
 		Production: c.Zap.Production,
