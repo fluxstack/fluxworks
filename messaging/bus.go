@@ -24,7 +24,7 @@ func NewLocal(logger *log.Logger) *EventBus {
 	busLogger := NewLogger(logger)
 	router, err := message.NewRouter(message.RouterConfig{}, busLogger)
 	if err != nil {
-		logger.Fatal("new eventbus error", err)
+		logger.Error("new eventbus error", err)
 		return nil
 	}
 	pubSub := gochannel.NewGoChannel(gochannel.Config{}, busLogger)

@@ -3,6 +3,7 @@ package messaging
 import (
 	"github.com/ThreeDotsLabs/watermill"
 	"github.com/fluxstack/fluxworks/log"
+	"github.com/fluxstack/fluxworks/types"
 )
 
 type Logger struct {
@@ -14,44 +15,39 @@ func NewLogger(logger *log.Logger) *Logger {
 }
 
 func (l *Logger) Error(msg string, err error, fields watermill.LogFields) {
-	f := log.Fields{}
-	f[log.DefaultMessageKey] = msg
-	f["error"] = err.Error()
+	f := types.M{}
 	for k, v := range fields {
 		f[k] = v
 	}
-	l.logger.Errorw(f)
+	l.logger.Error(msg, err, f)
 }
 
 func (l *Logger) Info(msg string, fields watermill.LogFields) {
-	f := log.Fields{}
-	f[log.DefaultMessageKey] = msg
+	f := types.M{}
 	for k, v := range fields {
 		f[k] = v
 	}
-	l.logger.Infow(f)
+	l.logger.Info(msg, f)
 }
 
 func (l *Logger) Debug(msg string, fields watermill.LogFields) {
-	f := log.Fields{}
-	f[log.DefaultMessageKey] = msg
+	f := types.M{}
 	for k, v := range fields {
 		f[k] = v
 	}
-	l.logger.Debugw(f)
+	l.logger.Debug(msg, f)
 }
 
 func (l *Logger) Trace(msg string, fields watermill.LogFields) {
-	f := log.Fields{}
-	f[log.DefaultMessageKey] = msg
+	f := types.M{}
 	for k, v := range fields {
 		f[k] = v
 	}
-	l.logger.Debugw(f)
+	l.logger.Debug(msg, f)
 }
 
 func (l *Logger) With(fields watermill.LogFields) watermill.LoggerAdapter {
-	f := log.Fields{}
+	f := types.M{}
 	for k, v := range fields {
 		f[k] = v
 	}
