@@ -661,8 +661,8 @@ github.com/envoyproxy/protoc-gen-validate v0.9.1/go.mod h1:OKNgG7TCp5pF4d6XftA0+
 github.com/envoyproxy/protoc-gen-validate v0.10.0/go.mod h1:DRjgyB0I43LtJapqN6NiRwroiAU2PaFuvk/vjgh61ss=
 github.com/envoyproxy/protoc-gen-validate v0.10.1/go.mod h1:DRjgyB0I43LtJapqN6NiRwroiAU2PaFuvk/vjgh61ss=
 github.com/envoyproxy/protoc-gen-validate v1.0.1/go.mod h1:0vj8bNkYbSTNS2PIyH87KZaeN4x9zpL9Qt8fQC7d+vs=
-github.com/fluxstack/fluxworks v0.0.0-20230724074707-4330c2482c5e h1:u4+DVVbN41Rv1Cs7GvxwyyNczqCv0D8I6pyIfrbZlaI=
-github.com/fluxstack/fluxworks v0.0.0-20230724074707-4330c2482c5e/go.mod h1:1hgG/OwiC16bXJVe0hMJknUlNGvqkkY3If85hEehUTo=
+github.com/weflux/fluxworks v0.0.0-20230724074707-4330c2482c5e h1:u4+DVVbN41Rv1Cs7GvxwyyNczqCv0D8I6pyIfrbZlaI=
+github.com/weflux/fluxworks v0.0.0-20230724074707-4330c2482c5e/go.mod h1:1hgG/OwiC16bXJVe0hMJknUlNGvqkkY3If85hEehUTo=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=

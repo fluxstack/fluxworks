@@ -1,7 +1,7 @@
 package zaplog
 
 import (
-	"github.com/fluxstack/fluxworks/log"
+	"github.com/weflux/fluxworks/log"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

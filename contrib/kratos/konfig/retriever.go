@@ -2,9 +2,9 @@ package konfig
 
 import (
 	"context"
-	"github.com/fluxstack/fluxworks/config"
 	kconfig "github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
+	"github.com/weflux/fluxworks/config"
 )
 
 type Store struct {

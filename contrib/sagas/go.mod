@@ -1,8 +1,8 @@
-module github.com/fluxstack/fluxworks/contrib/sagas
+module github.com/weflux/fluxworks/contrib/sagas
 
 go 1.20
 
-replace github.com/fluxstack/fluxworks => ../../
+replace github.com/weflux/fluxworks => ../../
 
 require (
 	github.com/ThreeDotsLabs/watermill v1.3.1

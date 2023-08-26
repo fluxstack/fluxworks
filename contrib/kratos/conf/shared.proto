@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package anyloop.conf;
 
-option go_package = "github.com/fluxstack/fluxworks/contrib/kratos/conf;conf";
+option go_package = "github.com/weflux/fluxworks/contrib/kratos/conf;conf";
 
 
 message Logger {

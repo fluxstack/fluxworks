@@ -1,4 +1,4 @@
-module github.com/fluxstack/fluxworks/contrib/taskq
+module github.com/weflux/fluxworks/contrib/taskq
 
 go 1.20
 

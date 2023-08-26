@@ -2,9 +2,10 @@ package log
 
 import (
 	"context"
-	"github.com/fluxstack/fluxworks/types"
+	"github.com/weflux/fluxworks/types"
 )
 
+type F types.M
 type Logger struct {
 	adapter Adapter
 }

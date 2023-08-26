@@ -1,12 +1,12 @@
-module github.com/fluxstack/fluxworks/contrib/kratos
+module github.com/weflux/fluxworks/contrib/kratos
 
 go 1.20
 replace (
-	github.com/fluxstack/fluxworks => ../../
+	github.com/weflux/fluxworks => ../../
 )
 
 require (
-	github.com/fluxstack/fluxworks v0.0.0-20230724074707-4330c2482c5e
+	github.com/weflux/fluxworks v0.0.0-20230724074707-4330c2482c5e
 	github.com/go-kratos/kratos/contrib/log/zap/v2 v2.0.0-20230706115902-bffc1a0989a6
 	github.com/go-kratos/kratos/v2 v2.6.3
 	go.uber.org/zap v1.24.0

@@ -1,3 +1,3 @@
-module github.com/fluxstack/fluxworks/contrib/kafka
+module github.com/weflux/fluxworks/contrib/kafka
 
 go 1.20

@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/fluxstack/fluxworks/app"
+	"github.com/weflux/fluxworks/app"
 )
 
 func main() {

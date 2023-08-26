@@ -1,9 +1,9 @@
 package gin
 
 import (
-	"github.com/fluxstack/fluxworks/log"
-	"github.com/fluxstack/fluxworks/types"
 	"github.com/gin-gonic/gin"
+	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/types"
 	"time"
 )
 

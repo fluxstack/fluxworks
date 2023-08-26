@@ -1,8 +1,8 @@
 package zaplog
 
 import (
-	log2 "github.com/fluxstack/fluxworks/log"
 	"github.com/stretchr/testify/assert"
+	log2 "github.com/weflux/fluxworks/log"
 	"testing"
 )
 

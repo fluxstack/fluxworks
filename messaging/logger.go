@@ -2,8 +2,8 @@ package messaging
 
 import (
 	"github.com/ThreeDotsLabs/watermill"
-	"github.com/fluxstack/fluxworks/log"
-	"github.com/fluxstack/fluxworks/types"
+	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/types"
 )
 
 type Logger struct {

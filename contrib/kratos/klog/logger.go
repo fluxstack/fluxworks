@@ -1,10 +1,10 @@
 package log
 
 import (
-	"github.com/fluxstack/fluxworks/log"
-	"github.com/fluxstack/fluxworks/log/zaplog"
 	kzap "github.com/go-kratos/kratos/contrib/log/zap/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
+	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/log/zaplog"
 	"go.uber.org/zap"
 	"strings"
 )
