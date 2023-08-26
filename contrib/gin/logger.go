@@ -2,6 +2,7 @@ package gin
 
 import (
 	"github.com/fluxstack/fluxworks/log"
+	"github.com/fluxstack/fluxworks/types"
 	"github.com/gin-gonic/gin"
 	"time"
 )
@@ -32,25 +33,26 @@ func SetLogger(logger *log.Logger, conf *Config) gin.HandlerFunc {
 				end = end.UTC()
 			}
 
-			fields := log.Field("status", c.Writer.Status()).
-				Field("method", c.Request.Method).
-				Field("path", path).
-				Field("query", query).
-				Field("ip", c.ClientIP()).
-				Field("user-agent", c.Request.UserAgent()).
-				Field("latency", latency)
+			fields := types.M{
+				"status":     c.Writer.Status(),
+				"method":     c.Request.Method,
+				"path":       path,
+				"query":      query,
+				"ip":         c.ClientIP(),
+				"user-agent": c.Request.UserAgent(),
+				"latency":    latency,
+			}
 
 			if conf.TimeFormat != "" {
-				fields = fields.Field("time", end.Format(conf.TimeFormat))
+				fields["time"] = end.Format(conf.TimeFormat)
 			}
 
 			if len(c.Errors) > 0 {
-				for _, e := range c.Errors.Errors() {
-					f := fields.Field("error", e)
-					logger.Errorw(f)
+				for _, e := range c.Errors {
+					logger.Error("", e, fields)
 				}
 			} else {
-				logger.Infow(fields)
+				logger.Info("", fields)
 			}
 		}
 
