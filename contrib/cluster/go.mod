@@ -7,5 +7,5 @@ replace (
 )
 require (
 	github.com/weflux/fluxworks v0.1.0
-		github.com/weaveworks/mesh v0.0.0-20191105120815-58dbcc3e8e63
+	github.com/weaveworks/mesh v0.0.0-20191105120815-58dbcc3e8e63
 )
