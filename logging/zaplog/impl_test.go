@@ -2,7 +2,7 @@ package zaplog
 
 import (
 	"github.com/stretchr/testify/assert"
-	log2 "github.com/weflux/fluxworks/log"
+	log2 "github.com/weflux/fluxworks/logging"
 	"testing"
 )
 

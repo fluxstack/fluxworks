@@ -3,13 +3,13 @@ package log
 import (
 	kzap "github.com/go-kratos/kratos/contrib/log/zap/v2"
 	klog "github.com/go-kratos/kratos/v2/log"
-	"github.com/weflux/fluxworks/log"
-	"github.com/weflux/fluxworks/log/zaplog"
+	"github.com/weflux/fluxworks/logging"
+	"github.com/weflux/fluxworks/logging/zaplog"
 	"go.uber.org/zap"
 	"strings"
 )
 
-func NewLogger(zlog *zap.Logger) *log.Logger {
+func NewLogger(zlog *zap.Logger) *logging.Logger {
 	return zaplog.New(zlog)
 }
 
@@ -39,19 +39,19 @@ func NewZapLogger(c Config) *zap.Logger {
 	return zlog
 }
 
-func stringToLevel(lv string) log.Level {
+func stringToLevel(lv string) logging.Level {
 	switch strings.ToLower(strings.TrimSpace(lv)) {
 	case "debug":
-		return log.LevelDebug
+		return logging.LevelDebug
 	case "info":
-		return log.LevelInfo
+		return logging.LevelInfo
 	case "warn":
-		return log.LevelWarn
+		return logging.LevelWarn
 	case "error":
-		return log.LevelError
+		return logging.LevelError
 	case "fatal":
-		return log.LevelFatal
+		return logging.LevelFatal
 	}
 
-	return log.LevelInfo
+	return logging.LevelInfo
 }

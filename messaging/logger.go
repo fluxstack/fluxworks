@@ -2,15 +2,15 @@ package messaging
 
 import (
 	"github.com/ThreeDotsLabs/watermill"
-	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/logging"
 	"github.com/weflux/fluxworks/types"
 )
 
 type Logger struct {
-	logger *log.Logger
+	logger *logging.Logger
 }
 
-func NewLogger(logger *log.Logger) *Logger {
+func NewLogger(logger *logging.Logger) *Logger {
 	return &Logger{logger: logger}
 }
 

@@ -1,12 +1,12 @@
 package zaplog
 
 import (
-	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/logging"
 	"github.com/weflux/fluxworks/types"
 	"go.uber.org/zap"
 )
 
-func NewAdapter(log *zap.Logger) log.Adapter {
+func NewAdapter(log *zap.Logger) logging.Adapter {
 	return &ZapLog{log: log}
 }
 
@@ -14,31 +14,31 @@ type ZapLog struct {
 	log *zap.Logger
 }
 
-func (z *ZapLog) Log(level log.Level, fields types.M) error {
+func (z *ZapLog) Log(level logging.Level, fields types.M) error {
 	var msg string
-	_msg, ok := fields[log.DefaultMessageKey]
+	_msg, ok := fields[logging.DefaultMessageKey]
 	if ok {
 		msg, _ = _msg.(string)
 	}
 
 	var data []zap.Field = make([]zap.Field, 0, len(fields))
 	for k, v := range fields {
-		if k == log.DefaultMessageKey {
+		if k == logging.DefaultMessageKey {
 			continue
 		}
 		data = append(data, zap.Any(k, v))
 	}
 
 	switch level {
-	case log.LevelDebug:
+	case logging.LevelDebug:
 		z.log.Debug(msg, data...)
-	case log.LevelInfo:
+	case logging.LevelInfo:
 		z.log.Info(msg, data...)
-	case log.LevelWarn:
+	case logging.LevelWarn:
 		z.log.Warn(msg, data...)
-	case log.LevelError:
+	case logging.LevelError:
 		z.log.Error(msg, data...)
-	case log.LevelFatal:
+	case logging.LevelFatal:
 		z.log.Fatal(msg, data...)
 	}
 	return nil

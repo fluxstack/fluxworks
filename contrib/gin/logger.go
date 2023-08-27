@@ -2,7 +2,7 @@ package gin
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/logging"
 	"github.com/weflux/fluxworks/types"
 	"time"
 )
@@ -14,7 +14,7 @@ type Config struct {
 	UTC          bool
 }
 
-func SetLogger(logger *log.Logger, conf *Config) gin.HandlerFunc {
+func SetLogger(logger *logging.Logger, conf *Config) gin.HandlerFunc {
 	skipPaths := make(map[string]bool, len(conf.SkipPaths))
 	for _, path := range conf.SkipPaths {
 		skipPaths[path] = true

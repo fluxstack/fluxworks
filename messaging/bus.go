@@ -7,7 +7,7 @@ import (
 	"github.com/ThreeDotsLabs/watermill/message"
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
 	"github.com/golang/protobuf/proto"
-	"github.com/weflux/fluxworks/log"
+	"github.com/weflux/fluxworks/logging"
 )
 
 type EventBus struct {
@@ -20,7 +20,7 @@ type EventBus struct {
 type Listener message.NoPublishHandlerFunc
 type Processor message.HandlerFunc
 
-func NewLocal(logger *log.Logger) *EventBus {
+func NewLocal(logger *logging.Logger) *EventBus {
 	busLogger := NewLogger(logger)
 	router, err := message.NewRouter(message.RouterConfig{}, busLogger)
 	if err != nil {
